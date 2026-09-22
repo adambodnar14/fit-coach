@@ -296,29 +296,117 @@ function renderResults() {
   document.getElementById("result-card").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
+// ---------- Predplatné (Free / Premium) ----------
+const PLAN_KEY = "fitcoach_premium";
+const USAGE_KEY = "fitcoach_usage";
+const FREE_WEEKLY_LIMIT = 3;
+
+function getISOWeekKey(date) {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const dayNum = (d.getUTCDay() + 6) % 7;
+  d.setUTCDate(d.getUTCDate() - dayNum + 3);
+  const firstThursday = new Date(Date.UTC(d.getUTCFullYear(), 0, 4));
+  const firstDayNum = (firstThursday.getUTCDay() + 6) % 7;
+  firstThursday.setUTCDate(firstThursday.getUTCDate() - firstDayNum + 3);
+  const week = 1 + Math.round((d - firstThursday) / (7 * 24 * 3600 * 1000));
+  return `${d.getUTCFullYear()}-W${week}`;
+}
+
+function isPremium() {
+  try { return localStorage.getItem(PLAN_KEY) === "true"; } catch (e) { return false; }
+}
+
+function setPremium(value) {
+  try { localStorage.setItem(PLAN_KEY, value ? "true" : "false"); } catch (e) { /* ignore */ }
+}
+
+function getUsage() {
+  const weekKey = getISOWeekKey(new Date());
+  let usage = null;
+  try { usage = JSON.parse(localStorage.getItem(USAGE_KEY) || "null"); } catch (e) { usage = null; }
+  if (!usage || usage.weekKey !== weekKey) usage = { weekKey, count: 0 };
+  return usage;
+}
+
+function incrementUsage() {
+  const usage = getUsage();
+  usage.count += 1;
+  try { localStorage.setItem(USAGE_KEY, JSON.stringify(usage)); } catch (e) { /* ignore */ }
+  return usage;
+}
+
+function updatePlanBadge() {
+  const badge = document.getElementById("plan-badge");
+  if (!badge) return;
+  if (isPremium()) {
+    badge.textContent = "⭐ Premium – neobmedzené odporúčania";
+    badge.classList.add("premium");
+  } else {
+    const remaining = Math.max(0, FREE_WEEKLY_LIMIT - getUsage().count);
+    badge.textContent = `Free plán — zostáva ${remaining}/${FREE_WEEKLY_LIMIT} odporúčaní tento týždeň`;
+    badge.classList.remove("premium");
+  }
+}
+
+function showLimitReached() {
+  const resultCard = document.getElementById("result-card");
+  if (!resultCard) return;
+  resultCard.hidden = false;
+  document.getElementById("result-summary").innerHTML =
+    `<div class="warning-box">Vyčerpal si ${FREE_WEEKLY_LIMIT} bezplatné odporúčania na tento týždeň.
+     <a href="cennik.html">Prejdi na Premium (5 €/mesiac)</a> pre neobmedzené odporúčania, alebo skús znova budúci týždeň.</div>`;
+  document.getElementById("result-macros").innerHTML = "";
+  document.getElementById("result-recipes").innerHTML = "";
+  resultCard.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function handleCalcClick() {
+  if (!isPremium() && getUsage().count >= FREE_WEEKLY_LIMIT) {
+    showLimitReached();
+    return;
+  }
+  renderResults();
+  if (!isPremium()) incrementUsage();
+  updatePlanBadge();
+}
+
 // ---------- Event listeners ----------
 document.addEventListener("DOMContentLoaded", () => {
-  fillDatalist();
+  updatePlanBadge();
 
-  document.getElementById("add-food-form").addEventListener("submit", (e) => {
-    e.preventDefault();
-    const nameInput = document.getElementById("food-name");
-    const amountInput = document.getElementById("food-amount");
-    const unitSelect = document.getElementById("food-unit");
+  const addFoodForm = document.getElementById("add-food-form");
+  if (addFoodForm) {
+    fillDatalist();
+    addFoodForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const nameInput = document.getElementById("food-name");
+      const amountInput = document.getElementById("food-amount");
+      const unitSelect = document.getElementById("food-unit");
 
-    const name = nameInput.value.trim();
-    const amount = parseFloat(amountInput.value);
-    const unit = unitSelect.value;
-    if (!name || !amount) return;
+      const name = nameInput.value.trim();
+      const amount = parseFloat(amountInput.value);
+      const unit = unitSelect.value;
+      if (!name || !amount) return;
 
-    const food = findFood(name);
-    state.items.push({ name, amount, unit, food, manualKcal: 0, manualProtein: 0, manualCarbs: 0, manualFat: 0 });
-    renderItems();
+      const food = findFood(name);
+      state.items.push({ name, amount, unit, food, manualKcal: 0, manualProtein: 0, manualCarbs: 0, manualFat: 0 });
+      renderItems();
 
-    nameInput.value = "";
-    amountInput.value = "";
-    nameInput.focus();
-  });
+      nameInput.value = "";
+      amountInput.value = "";
+      nameInput.focus();
+    });
+  }
 
-  document.getElementById("calc-btn").addEventListener("click", renderResults);
+  const calcBtn = document.getElementById("calc-btn");
+  if (calcBtn) calcBtn.addEventListener("click", handleCalcClick);
+
+  const premiumToggle = document.getElementById("premium-toggle");
+  if (premiumToggle) {
+    premiumToggle.checked = isPremium();
+    premiumToggle.addEventListener("change", () => {
+      setPremium(premiumToggle.checked);
+      updatePlanBadge();
+    });
+  }
 });

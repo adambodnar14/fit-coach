@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cenník – Fit Coach</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html">Kalorický denník</a>
+  <a href="cennik.html" class="active">Cenník</a>
+</nav>
+
+<header class="app-header">
+  <h1>💳 Cenník</h1>
+  <p>Vyber si plán, ktorý ti vyhovuje.</p>
+  <div id="plan-badge" class="plan-badge"></div>
+</header>
+
+<main class="container">
+
+  <section class="pricing-grid">
+    <div class="card plan-card">
+      <h2>Free</h2>
+      <div class="price">0 € <span>/ mesiac</span></div>
+      <ul class="plan-features">
+        <li>✅ Odhad kalórií zo zjedeného jedla</li>
+        <li>✅ Výpočet kalorického cieľa</li>
+        <li>⚠️ <strong>Max. 3 odporúčania jedálnička týždenne</strong></li>
+      </ul>
+      <p class="plan-note">Automaticky aktívny plán, netreba nič nastavovať.</p>
+    </div>
+
+    <div class="card plan-card plan-premium">
+      <h2>Premium</h2>
+      <div class="price">5 € <span>/ mesiac</span></div>
+      <ul class="plan-features">
+        <li>✅ Odhad kalórií zo zjedeného jedla</li>
+        <li>✅ Výpočet kalorického cieľa</li>
+        <li>✅ <strong>Neobmedzené odporúčania jedálnička</strong></li>
+      </ul>
+      <p class="plan-note">
+        Táto stránka nemá napojenú platobnú bránu — ide o statickú
+        ukážkovú aplikáciu bez servera. Nižšie je len demo prepínač,
+        ktorý simuluje aktívne predplatné v tomto prehliadači
+        (žiadna platba sa nespracúva).
+      </p>
+      <label class="premium-toggle">
+        <input type="checkbox" id="premium-toggle">
+        Mám aktívne Premium (demo, bez platby)
+      </label>
+    </div>
+  </section>
+
+  <section class="card">
+    <h3>Ako sa počíta týždenný limit?</h3>
+    <p>Na Free pláne máš k dispozícii 3 vygenerované odporúčania jedálnička za kalendárny týždeň (pondelok–nedeľa). Odhad kalórií zo zjedeného jedla nie je nijako obmedzený — limit sa týka len tlačidla „Vypočítať odporúčanie“.</p>
+  </section>
+
+</main>
+
+<footer>
+  <p>Odhady kalórií a odporúčania sú orientačné, nie lekárske ani nutričné poradenstvo.</p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

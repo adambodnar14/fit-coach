@@ -18,6 +18,25 @@ body {
   color: var(--text);
 }
 
+.topnav {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  background: var(--green-dark);
+  padding: 10px 16px;
+}
+
+.topnav a {
+  color: #dff5e2;
+  text-decoration: none;
+  font-size: 0.9rem;
+  padding: 6px 14px;
+  border-radius: 999px;
+}
+
+.topnav a:hover { background: rgba(255,255,255,0.12); }
+.topnav a.active { background: #fff; color: var(--green-dark); font-weight: 600; }
+
 .app-header {
   background: linear-gradient(135deg, var(--green), var(--green-dark));
   color: #fff;
@@ -27,6 +46,16 @@ body {
 
 .app-header h1 { margin: 0 0 6px; font-size: 1.8rem; }
 .app-header p { margin: 0; opacity: 0.9; }
+
+.plan-badge {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.18);
+  font-size: 0.82rem;
+}
+.plan-badge.premium { background: #ffd43b; color: #7a5200; font-weight: 600; }
 
 .container {
   max-width: 720px;
@@ -184,6 +213,33 @@ footer {
   color: var(--muted);
   font-size: 0.78rem;
   padding: 10px 16px 30px;
+}
+
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.plan-card { display: flex; flex-direction: column; }
+.plan-card h2 { margin: 0 0 4px; }
+.plan-card .price { font-size: 1.9rem; font-weight: 700; color: var(--green-dark); margin-bottom: 12px; }
+.plan-card .price span { font-size: 0.9rem; font-weight: 400; color: var(--muted); }
+
+.plan-features { list-style: none; padding: 0; margin: 0 0 12px; display: flex; flex-direction: column; gap: 8px; font-size: 0.92rem; }
+
+.plan-note { font-size: 0.8rem; color: var(--muted); margin-top: auto; }
+
+.plan-premium { border: 2px solid var(--green); }
+
+.premium-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 0.85rem;
+  color: var(--muted);
+  cursor: pointer;
 }
 
 @media (max-width: 480px) {
